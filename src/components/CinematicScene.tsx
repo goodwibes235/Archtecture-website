@@ -1,18 +1,21 @@
 /**
  * ATELIER — Cinematic Scene Component
- * A scroll-controlled scene: canvas frame sequence OR poster fallback.
- * HTML text and parallax layers are kept separate from the video layer.
- * Per theme.md § 9, 13, 15.
+ * 
+ * Individual scroll-driven architectural scene:
+ * - Real 24fps WebP frame sequence canvas scrub (240 frames)
+ * - Synchronous Frame 0 draw & poster fallback (zero black flashes)
+ * - Independent HTML typography layer with subtle parallax
+ * - GSAP ScrollTrigger pinning with accurate pinSpacing
  */
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { gsap, ScrollTrigger } from '../lib/scroll';
 import type { CinematicScene } from '../data/cinematicScenes';
 import './CinematicScene.css';
 
 interface CinematicSceneProps {
   scene: CinematicScene;
-  /** Scroll span in viewport heights, e.g. 2 = 200vh pinned */
+  /** Scroll span in viewport heights, e.g. 1.6 = 160vh */
   scrollSpan?: number;
   chapterNumber?: string;
   coordinates?: string;
@@ -24,7 +27,7 @@ interface CinematicSceneProps {
 
 export const CinematicSceneComponent: React.FC<CinematicSceneProps> = ({
   scene,
-  scrollSpan = 2,
+  scrollSpan = 1.6,
   chapterNumber,
   coordinates,
   statusBadge,
@@ -35,157 +38,193 @@ export const CinematicSceneComponent: React.FC<CinematicSceneProps> = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const hasFrames = scene.frameCount > 0 && scene.framePattern !== null;
-
-  // Stored CSS width/height for drawing (not raw pixel dimensions)
-  const cssSizeRef = useRef({ w: 0, h: 0 });
-  const framesRef = useRef<(HTMLImageElement | null)[]>([]);
+  const framesCacheRef = useRef<(HTMLImageElement | null)[]>([]);
   const lastDrawnIdx = useRef(-1);
-  const currentProgressRef = useRef(0);
 
-  const getFrameUrl = (idx: number): string => {
-    if (!scene.framePattern) return scene.poster;
-    return scene.framePattern.replace('{index}', String(idx).padStart(4, '0'));
-  };
+  // Format 6-digit zero-padded frame URL
+  const getFrameUrl = useCallback(
+    (idx: number): string => {
+      if (!scene.framePattern) return scene.poster;
+      const padded = String(idx).padStart(6, '0');
+      return scene.framePattern.replace('{index}', padded);
+    },
+    [scene.framePattern, scene.poster]
+  );
 
-  const drawFrame = (progress: number) => {
-    if (!hasFrames || !canvasRef.current) return;
-    const span = scene.endIndex - scene.startIndex;
-    if (span < 0) return;
+  // Direct canvas drawing without blank clearing
+  const drawFrame = useCallback(
+    (progress: number) => {
+      if (!hasFrames || !canvasRef.current) return;
+      const span = scene.endIndex - scene.startIndex;
+      if (span <= 0) return;
 
-    const rawIdx = span > 0 ? scene.startIndex + Math.round(progress * span) : scene.startIndex;
-    const idx = Math.max(scene.startIndex, Math.min(scene.endIndex, rawIdx));
-    if (idx === lastDrawnIdx.current) return;
+      const targetIdx = scene.startIndex + Math.round(progress * span);
+      const clampedIdx = Math.max(scene.startIndex, Math.min(scene.endIndex, targetIdx));
+      if (clampedIdx === lastDrawnIdx.current) return;
 
-    const img = framesRef.current[idx - scene.startIndex];
-    if (!img?.complete || !img.naturalWidth) return;
-    lastDrawnIdx.current = idx;
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
 
-    const ctx = canvasRef.current.getContext('2d');
-    if (!ctx) return;
+      const cw = canvas.width;
+      const ch = canvas.height;
+      if (!cw || !ch) return;
 
-    // Use CSS dimensions for drawing (DPR scaling is applied via ctx.scale / setTransform)
-    const { w: cw, h: ch } = cssSizeRef.current;
-    if (!cw || !ch) return;
+      // Check target frame or search nearest loaded frame
+      let img = framesCacheRef.current[clampedIdx];
+      let actualIdx = clampedIdx;
 
-    const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
-    const sw = img.naturalWidth * scale;
-    const sh = img.naturalHeight * scale;
-    ctx.clearRect(0, 0, cw, ch);
-    ctx.drawImage(img, (cw - sw) / 2, (ch - sh) / 2, sw, sh);
-  };
+      if (!img || !img.complete || img.naturalWidth === 0) {
+        for (let offset = 1; offset <= 25; offset++) {
+          const prev = clampedIdx - offset;
+          const next = clampedIdx + offset;
+          if (prev >= scene.startIndex && framesCacheRef.current[prev]?.complete) {
+            img = framesCacheRef.current[prev];
+            actualIdx = prev;
+            break;
+          }
+          if (next <= scene.endIndex && framesCacheRef.current[next]?.complete) {
+            img = framesCacheRef.current[next];
+            actualIdx = next;
+            break;
+          }
+        }
+      }
 
-  // Load frames progressively
+      if (!img || !img.complete || img.naturalWidth === 0) return;
+
+      lastDrawnIdx.current = actualIdx;
+
+      const iw = img.naturalWidth;
+      const ih = img.naturalHeight;
+      const scale = Math.max(cw / iw, ch / ih);
+      const sw = iw * scale;
+      const sh = ih * scale;
+      const dx = (cw - sw) / 2;
+      const dy = (ch - sh) / 2;
+
+      ctx.drawImage(img, dx, dy, sw, sh);
+    },
+    [hasFrames, scene.endIndex, scene.startIndex]
+  );
+
+  // Canvas sizing and initial Frame 0 render on mount
+  useEffect(() => {
+    if (!canvasRef.current || !hasFrames) return;
+    const canvas = canvasRef.current;
+
+    const sizeCanvas = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      lastDrawnIdx.current = -1;
+      drawFrame(0);
+    };
+
+    sizeCanvas();
+    window.addEventListener('resize', sizeCanvas);
+    return () => window.removeEventListener('resize', sizeCanvas);
+  }, [hasFrames, drawFrame]);
+
+  // Progressive Frame Preloader
   useEffect(() => {
     if (!hasFrames) return;
     const count = scene.endIndex - scene.startIndex + 1;
     if (count <= 0) return;
 
-    framesRef.current = new Array(count).fill(null);
+    framesCacheRef.current = new Array(count).fill(null);
     lastDrawnIdx.current = -1;
 
-    const BATCH = Math.min(30, count);
+    let isCancelled = false;
 
-    const loadOne = (relIdx: number): Promise<void> =>
-      new Promise((res) => {
+    const loadSingleFrame = (idx: number): Promise<void> =>
+      new Promise((resolve) => {
+        if (framesCacheRef.current[idx]) {
+          resolve();
+          return;
+        }
         const img = new Image();
         img.onload = () => {
-          framesRef.current[relIdx] = img;
-          const span = scene.endIndex - scene.startIndex;
-          const targetRelIdx = span > 0
-            ? Math.max(0, Math.min(span, Math.round(currentProgressRef.current * span)))
-            : 0;
-          if (relIdx === targetRelIdx) {
-            drawFrame(currentProgressRef.current);
+          if (!isCancelled) {
+            framesCacheRef.current[idx] = img;
+            if (idx === 0) {
+              drawFrame(0);
+            }
           }
-          res();
+          resolve();
         };
-        img.onerror = () => res();
-        img.src = getFrameUrl(scene.startIndex + relIdx);
+        img.onerror = () => resolve();
+        img.src = getFrameUrl(scene.startIndex + idx);
       });
 
-    let cancelled = false;
-    const loadAll = async () => {
-      await Promise.all(Array.from({ length: BATCH }, (_, i) => loadOne(i)));
-      for (let i = BATCH; i < count && !cancelled; i++) {
-        await loadOne(i);
+    const preloadSequence = async () => {
+      // 1. Frame 0 priority
+      await loadSingleFrame(0);
+
+      // 2. Initial batch (first 30 frames)
+      const initialBatch: Promise<void>[] = [];
+      for (let i = 1; i < Math.min(30, count); i++) {
+        initialBatch.push(loadSingleFrame(i));
+      }
+      await Promise.all(initialBatch);
+
+      // 3. Background queue for remaining frames
+      for (let i = 30; i < count && !isCancelled; i += 4) {
+        await Promise.all([
+          loadSingleFrame(i),
+          i + 1 < count ? loadSingleFrame(i + 1) : Promise.resolve(),
+          i + 2 < count ? loadSingleFrame(i + 2) : Promise.resolve(),
+          i + 3 < count ? loadSingleFrame(i + 3) : Promise.resolve(),
+        ]);
       }
     };
-    loadAll();
+
+    preloadSequence();
 
     return () => {
-      cancelled = true;
+      isCancelled = true;
     };
-  }, [scene.id, hasFrames]); // eslint-disable-line
-
-  // Canvas sizing with correct DPR scaling
-  useEffect(() => {
-    if (!canvasRef.current || !hasFrames) return;
-
-    const canvas = canvasRef.current;
-    const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const cssW = canvas.clientWidth || window.innerWidth;
-      const cssH = canvas.clientHeight || window.innerHeight;
-
-      cssSizeRef.current = { w: cssW, h: cssH };
-
-      // Set actual pixel buffer
-      canvas.width = cssW * dpr;
-      canvas.height = cssH * dpr;
-
-      // Scale context so drawing in CSS px coordinates
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-      lastDrawnIdx.current = -1;
-      drawFrame(currentProgressRef.current);
-    };
-
-    // Wait for layout
-    requestAnimationFrame(resize);
-    window.addEventListener('resize', resize);
-    return () => window.removeEventListener('resize', resize);
-  }, [hasFrames]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [scene.id, hasFrames, scene.endIndex, scene.startIndex, getFrameUrl, drawFrame]);
 
   // GSAP ScrollTrigger
   useEffect(() => {
     const wrapper = wrapperRef.current;
-    if (!wrapper) return;
+    const sticky = stickyRef.current;
+    if (!wrapper || !sticky) return;
 
     const trigger = ScrollTrigger.create({
       trigger: wrapper,
       start: 'top top',
       end: `+=${scrollSpan * 100}%`,
-      pin: stickyRef.current,
+      pin: sticky,
       pinSpacing: true,
-      scrub: 1.2,
+      scrub: 0.4,
       onUpdate: (self) => {
         const p = self.progress;
-        currentProgressRef.current = p;
         onProgress?.(p);
 
-        if (hasFrames) drawFrame(p);
-
-        // Content parallax — subtle upward drift
-        if (contentRef.current) {
-          gsap.set(contentRef.current, { y: p * -30 });
+        if (hasFrames) {
+          drawFrame(p);
         }
 
-        // Overlay: slight atmospheric depth variation
-        if (overlayRef.current) {
-          const edgeFade = Math.min(p * 5, (1 - p) * 5, 1);
-          gsap.set(overlayRef.current, { opacity: 0.6 + edgeFade * 0.2 });
+        // Independent subtle typography entrance/exit parallax
+        if (contentRef.current) {
+          const textOpacity = p < 0.8 ? 1 : Math.max(0, 1 - (p - 0.8) / 0.18);
+          gsap.set(contentRef.current, {
+            opacity: textOpacity,
+            yPercent: -p * 8,
+          });
         }
       },
     });
 
     return () => trigger.kill();
-  }, [scene.id, scrollSpan]); // eslint-disable-line
+  }, [scene.id, scrollSpan, hasFrames, drawFrame, onProgress]);
 
   return (
     <div
@@ -195,23 +234,15 @@ export const CinematicSceneComponent: React.FC<CinematicSceneProps> = ({
       data-scene-id={scene.id}
     >
       <div ref={stickyRef} className="cinematic-sticky">
-        {/* Layer 1: Background Visual */}
-        <div
-          className="cinematic-bg"
-          style={{ background: scene.fallbackGradient }}
-        >
-          {/* Poster — shown when no frames; hidden behind canvas when frames load */}
+        {/* Layer 1: Visual Media (Poster + Video Canvas) */}
+        <div className="cinematic-media-layer">
           <img
             src={scene.poster}
             alt=""
             aria-hidden="true"
-            className={`cinematic-poster ${hasFrames ? 'cinematic-poster--with-canvas' : ''}`}
+            className="cinematic-poster"
             loading="eager"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-            }}
           />
-          {/* Canvas — rendered on top of poster once frames start loading */}
           {hasFrames && (
             <canvas
               ref={canvasRef}
@@ -221,34 +252,32 @@ export const CinematicSceneComponent: React.FC<CinematicSceneProps> = ({
           )}
         </div>
 
-        {/* Layer 2: Subtle architectural corner registration crosshairs */}
+        {/* Layer 2: Subtle bottom text scrim for high contrast legibility */}
+        <div className="cinematic-scrim" />
+
+        {/* Layer 3: Corner Registration Crosshairs */}
         <div className="cinematic-corner cinematic-corner--tl" aria-hidden="true">+</div>
         <div className="cinematic-corner cinematic-corner--tr" aria-hidden="true">+</div>
         <div className="cinematic-corner cinematic-corner--bl" aria-hidden="true">+</div>
         <div className="cinematic-corner cinematic-corner--br" aria-hidden="true">+</div>
 
-        {/* Top HUD Bar (if metadata provided) */}
+        {/* Layer 4: Top HUD Bar */}
         {(chapterNumber || coordinates || statusBadge) && (
-          <div className="cinematic-hud">
-            {chapterNumber && (
-              <span className="hud-chapter text-label">{chapterNumber}</span>
-            )}
-            {coordinates && (
-              <span className="hud-coordinates">{coordinates}</span>
-            )}
+          <header className="cinematic-hud" aria-live="polite">
+            <div className="cinematic-hud__left">
+              {chapterNumber && <span className="hud-chapter text-label">{chapterNumber}</span>}
+              {coordinates && <span className="hud-coordinates text-mono">{coordinates}</span>}
+            </div>
             {statusBadge && (
               <span className="hud-badge">
                 <span className="hud-badge__dot" />
                 {statusBadge}
               </span>
             )}
-          </div>
+          </header>
         )}
 
-        {/* Layer 3: Gradient overlay for text legibility */}
-        <div ref={overlayRef} className="cinematic-overlay" />
-
-        {/* Layer 4: HTML content — text stays crisp, selectable */}
+        {/* Layer 5: HTML Content Overlay */}
         <div
           ref={contentRef}
           className={`cinematic-content cinematic-content--${alignment}`}

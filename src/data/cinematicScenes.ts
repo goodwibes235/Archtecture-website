@@ -1,8 +1,8 @@
 /**
  * ATELIER — Cinematic Scene Manifest
- * Source of truth: Real 24fps WebP Frame Sequences (240 frames each)
  * 
- * Frame filename format: frame_000000.webp -> frame_000239.webp (6-digit zero-padded)
+ * Source of truth: Real 24fps WebP Frame Sequences (240 frames per scene)
+ * Naming convention: frame_000000.webp -> frame_000239.webp (6-digit zero-padded)
  */
 
 export interface CinematicScene {

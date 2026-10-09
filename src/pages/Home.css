@@ -283,6 +283,8 @@
   padding-block: var(--space-2xl);
   background: var(--color-charcoal-light);
   position: relative;
+  z-index: 50;
+  width: 100%;
   border-top: var(--border-hairline);
   border-bottom: var(--border-hairline);
 }

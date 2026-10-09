@@ -58,10 +58,7 @@ export const Footer: React.FC = () => {
 
         <div className="footer__bottom">
           <p className="footer__copy">
-            &copy; {CURRENT_YEAR} ATELIER Architecture &amp; Spatial Design.
-            <span className="footer__disclaimer">
-              {' '}All rights reserved. Monograph &amp; architectural portfolio demo.
-            </span>
+            &copy; {CURRENT_YEAR} ATELIER Architecture &amp; Spatial Design. All rights reserved.
           </p>
           <div className="footer__bottom-links">
             <Link to="/contact">Initiate a Commission Inquiry →</Link>
