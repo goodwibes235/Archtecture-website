@@ -20,12 +20,16 @@
 
 .studio-hero__title {
   color: var(--color-ivory);
+  font-weight: 500;
+  text-shadow: var(--shadow-text-headline);
+  text-wrap: balance;
   max-width: 900px;
 }
 
 .studio-hero__lead {
   max-width: 620px;
-  color: var(--color-limestone);
+  color: var(--color-muted-desc);
+  line-height: 1.68;
 }
 
 .studio-body {
@@ -55,12 +59,14 @@
 .studio-philosophy__lead {
   color: var(--color-ivory);
   font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+  font-weight: 500;
   line-height: 1.6;
+  text-shadow: var(--shadow-text-headline);
 }
 
 .studio-philosophy__text p {
-  color: var(--color-limestone);
-  line-height: 1.75;
+  color: var(--color-muted-desc);
+  line-height: 1.72;
 }
 
 .studio-principles {

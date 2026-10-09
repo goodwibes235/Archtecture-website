@@ -19,11 +19,16 @@
 
 .hero-headline {
   color: var(--color-ivory);
+  font-weight: 550;
+  text-shadow: var(--shadow-text-hero);
+  text-wrap: balance;
 }
 
 .hero-sub {
   max-width: 580px;
-  color: var(--color-limestone);
+  color: var(--color-muted-desc);
+  line-height: 1.68;
+  text-shadow: var(--shadow-text-body);
 }
 
 .hero-ctas {
@@ -73,7 +78,7 @@
 .scroll-cue__label {
   font-family: var(--font-mono);
   font-size: var(--text-micro);
-  letter-spacing: 0.2em;
+  letter-spacing: 0.16em;
   color: var(--color-concrete);
 }
 
@@ -95,10 +100,12 @@
 .philosophy-quote {
   font-family: var(--font-display);
   font-size: clamp(2rem, 3.8vw, 3.8rem);
-  font-weight: 300;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
   color: var(--color-ivory);
+  text-shadow: var(--shadow-text-headline);
+  text-wrap: balance;
 }
 
 .philosophy-cite {
@@ -107,7 +114,9 @@
 }
 
 .philosophy-body {
-  color: var(--color-limestone);
+  color: var(--color-muted-desc);
+  line-height: 1.68;
+  text-shadow: var(--shadow-text-body);
 }
 
 .philosophy-pillars {
@@ -160,10 +169,15 @@
 
 .residence-card__title {
   color: var(--color-ivory);
+  font-weight: 500;
+  text-shadow: var(--shadow-text-headline);
+  text-wrap: balance;
 }
 
 .residence-card__desc {
-  color: var(--color-limestone);
+  color: var(--color-muted-desc);
+  line-height: 1.68;
+  text-shadow: var(--shadow-text-body);
 }
 
 .residence-specs {
@@ -206,10 +220,15 @@
 
 .interior-showcase__title {
   color: var(--color-ivory);
+  font-weight: 500;
+  text-shadow: var(--shadow-text-headline);
+  text-wrap: balance;
 }
 
 .interior-showcase__lead {
-  color: var(--color-limestone);
+  color: var(--color-muted-desc);
+  line-height: 1.68;
+  text-shadow: var(--shadow-text-body);
 }
 
 .interior-tags {
@@ -268,14 +287,14 @@
 .material-card__name {
   font-family: var(--font-display);
   font-size: 1.35rem;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--color-ivory);
 }
 
 .material-card__desc {
   font-size: var(--text-small);
-  color: var(--color-limestone);
-  line-height: 1.5;
+  color: var(--color-muted-desc);
+  line-height: 1.6;
 }
 
 /* ── Scene 06: Services / Practice Disciplines ─────────────────── */
@@ -305,10 +324,15 @@
 
 .services-editorial__heading {
   color: var(--color-ivory);
+  font-weight: 500;
+  text-shadow: var(--shadow-text-headline);
+  text-wrap: balance;
 }
 
 .services-editorial__intro {
   max-width: 520px;
+  color: var(--color-muted-desc);
+  line-height: 1.68;
 }
 
 .services-editorial__grid {
@@ -354,15 +378,15 @@
 .service-card__title {
   font-family: var(--font-display);
   font-size: clamp(1.4rem, 2.2vw, 2.1rem);
-  font-weight: 300;
+  font-weight: 500;
   color: var(--color-ivory);
-  letter-spacing: -0.015em;
+  letter-spacing: -0.012em;
 }
 
 .service-card__desc {
   font-size: var(--text-lead);
-  color: var(--color-limestone);
-  line-height: 1.6;
+  color: var(--color-muted-desc);
+  line-height: 1.68;
   flex-grow: 1;
 }
 
@@ -402,11 +426,15 @@
 
 .closing-portal__title {
   color: var(--color-ivory);
+  font-weight: 500;
+  text-shadow: var(--shadow-text-headline);
+  text-wrap: balance;
 }
 
 .closing-portal__desc {
   max-width: 580px;
-  color: var(--color-limestone);
+  color: var(--color-muted-desc);
+  line-height: 1.68;
 }
 
 .closing-portal__actions {
