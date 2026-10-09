@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { gsap, ScrollTrigger } from '../lib/scroll';
 import { cinematicScenes } from '../data/cinematicScenes';
 import './CinematicStage.css';
+import { Scene3DVisual } from './Scene3DVisual';
 
 interface CinematicStageProps {
   onChapterChange?: (chapterIndex: number) => void;
@@ -50,6 +51,14 @@ export const CinematicStage: React.FC<CinematicStageProps> = ({ onChapterChange 
   const s4TextRef = useRef<HTMLDivElement>(null);
   const s5TextRef = useRef<HTMLDivElement>(null);
   const s6TextRef = useRef<HTMLDivElement>(null);
+
+  // 3D Visual Object Refs
+  const s1VisualRef = useRef<HTMLDivElement>(null);
+  const s2VisualRef = useRef<HTMLDivElement>(null);
+  const s3VisualRef = useRef<HTMLDivElement>(null);
+  const s4VisualRef = useRef<HTMLDivElement>(null);
+  const s5VisualRef = useRef<HTMLDivElement>(null);
+  const s6VisualRef = useRef<HTMLDivElement>(null);
 
   // Frame caches: [sceneIdx][frameIdx]
   const framesCacheRef = useRef<(HTMLImageElement | null)[][]>([
@@ -401,6 +410,32 @@ export const CinematicStage: React.FC<CinematicStageProps> = ({ onChapterChange 
         const t6In = Math.min(1, Math.max(0, (p - 0.83) / 0.05));
         gsap.set(s6TextRef.current, { opacity: t6In, yPercent: 4 - p6 * 6 });
       }
+
+      /* ================================================================
+         4. SCROLL-SYNCHRONIZED 3D VISUAL OBJECT ANIMATIONS
+         ================================================================ */
+      const updateVisualMotion = (el: HTMLElement | null, pSub: number) => {
+        if (!el) return;
+        const enterProgress = Math.min(1, Math.max(0, pSub / 0.35));
+        const settleProgress = Math.min(1, Math.max(0, (pSub - 0.35) / 0.65));
+        const x = -50 * (1 - enterProgress);
+        const opacity = Math.min(1, enterProgress * 1.5);
+        const rotY = -20 + enterProgress * 12 + settleProgress * 3;
+        const rotX = 12 - settleProgress * 4;
+        const z = -25 + enterProgress * 25;
+        gsap.set(el, {
+          x,
+          opacity,
+          transform: `perspective(1200px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(${z}px)`,
+        });
+      };
+
+      updateVisualMotion(s1VisualRef.current, p1);
+      updateVisualMotion(s2VisualRef.current, p2);
+      updateVisualMotion(s3VisualRef.current, p3);
+      updateVisualMotion(s4VisualRef.current, p4);
+      updateVisualMotion(s5VisualRef.current, p5);
+      updateVisualMotion(s6VisualRef.current, p6);
     };
 
     // Run initial update immediately on mount
@@ -485,15 +520,18 @@ export const CinematicStage: React.FC<CinematicStageProps> = ({ onChapterChange 
                   <span>Studio Manifesto</span>
                 </Link>
               </div>
-            </div>
 
-            {/* Scroll Indicator */}
-            <div className="scroll-cue" aria-hidden="true">
-              <span className="scroll-cue__label">SCROLL TO EXPLORE</span>
-              <div className="scroll-cue__line">
-                <div className="scroll-cue__indicator" />
+              {/* Scroll Indicator */}
+              <div className="scroll-cue" aria-hidden="true">
+                <span className="scroll-cue__label">SCROLL TO EXPLORE</span>
+                <div className="scroll-cue__line">
+                  <div className="scroll-cue__indicator" />
+                </div>
               </div>
             </div>
+
+            {/* Right Side 3D Visual Object */}
+            <Scene3DVisual ref={s1VisualRef} sceneId={1} />
           </div>
         </div>
 
@@ -542,6 +580,9 @@ export const CinematicStage: React.FC<CinematicStageProps> = ({ onChapterChange 
                 </div>
               </div>
             </div>
+
+            {/* Right Side 3D Visual Object */}
+            <Scene3DVisual ref={s2VisualRef} sceneId={2} />
           </div>
         </div>
 
@@ -600,6 +641,9 @@ export const CinematicStage: React.FC<CinematicStageProps> = ({ onChapterChange 
                 </Link>
               </div>
             </div>
+
+            {/* Right Side 3D Visual Object */}
+            <Scene3DVisual ref={s3VisualRef} sceneId={3} />
           </div>
         </div>
 
@@ -655,6 +699,9 @@ export const CinematicStage: React.FC<CinematicStageProps> = ({ onChapterChange 
                 </Link>
               </div>
             </div>
+
+            {/* Right Side 3D Visual Object */}
+            <Scene3DVisual ref={s4VisualRef} sceneId={4} />
           </div>
         </div>
 
@@ -705,6 +752,9 @@ export const CinematicStage: React.FC<CinematicStageProps> = ({ onChapterChange 
                 </div>
               </div>
             </div>
+
+            {/* Right Side 3D Visual Object */}
+            <Scene3DVisual ref={s5VisualRef} sceneId={5} activeMaterial={activeMaterial} />
           </div>
         </div>
 
@@ -766,6 +816,9 @@ export const CinematicStage: React.FC<CinematicStageProps> = ({ onChapterChange 
                 </Link>
               </div>
             </div>
+
+            {/* Right Side 3D Visual Object */}
+            <Scene3DVisual ref={s6VisualRef} sceneId={6} />
           </div>
         </div>
 

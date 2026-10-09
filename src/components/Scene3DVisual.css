@@ -1,0 +1,302 @@
+/* ================================================================
+   ATELIER — Scene 3D Visual Objects Component
+   Photorealistic Architectural Assets with Genuine Alpha Channels
+   ================================================================ */
+
+.scene-visual-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  min-height: 440px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+  pointer-events: auto;
+  user-select: none;
+  will-change: transform, opacity;
+  flex-shrink: 0;
+}
+
+.scene-visual-card {
+  position: relative;
+  width: 100%;
+  height: 440px;
+  background: rgba(14, 15, 13, 0.65);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(246, 243, 236, 0.12);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  overflow: hidden;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(246, 243, 236, 0.15);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transform-style: preserve-3d;
+  transition: border-color 0.4s var(--ease-apple), box-shadow 0.4s var(--ease-apple);
+}
+
+.scene-visual-card:hover {
+  border-color: rgba(200, 169, 110, 0.35);
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.75),
+    0 0 30px rgba(200, 169, 110, 0.1),
+    inset 0 1px 0 rgba(246, 243, 236, 0.22);
+}
+
+/* Card Header — Technical Monograph Header */
+.visual-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(246, 243, 236, 0.08);
+  padding-bottom: 0.6rem;
+  z-index: 10;
+}
+
+.visual-card__tag {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  color: var(--color-bronze-glow);
+  text-transform: uppercase;
+}
+
+.visual-card__coord {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--color-stone);
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+}
+
+/* 3D Stage Viewport */
+.visual-stage-viewport {
+  position: relative;
+  width: 100%;
+  height: 290px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+}
+
+/* Background Isometric Grid */
+.visual-grid-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+/* Photorealistic Asset Container */
+.visual-asset-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+}
+
+/* Photorealistic Asset Image (Isolated with Genuine Alpha Channel) */
+.visual-photorealistic-asset {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 270px;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 18px 36px rgba(0, 0, 0, 0.75));
+  transform: translateZ(20px);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease;
+  will-change: transform;
+}
+
+.scene-visual-card:hover .visual-photorealistic-asset {
+  transform: translateZ(32px) scale(1.025);
+  filter: drop-shadow(0 24px 45px rgba(0, 0, 0, 0.85));
+}
+
+.visual-photorealistic-asset--material {
+  animation: materialSwitch 0.4s var(--ease-apple) forwards;
+}
+
+@keyframes materialSwitch {
+  0% {
+    opacity: 0.7;
+    transform: translateZ(10px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateZ(20px) scale(1);
+  }
+}
+
+/* Architectural Callout Annotation Pins */
+.visual-annotation {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  z-index: 20;
+  pointer-events: auto;
+  transition: transform 0.35s var(--ease-apple), opacity 0.35s ease;
+  transform: translateZ(35px);
+}
+
+.visual-annotation__node {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-bronze-glow);
+  box-shadow: 0 0 10px var(--color-bronze-glow), 0 0 0 2px rgba(200, 169, 110, 0.3);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.visual-annotation__node::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(200, 169, 110, 0.4);
+  animation: pulseNode 3s ease-in-out infinite;
+}
+
+@keyframes pulseNode {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.6); opacity: 0.15; }
+}
+
+.visual-annotation__content {
+  background: rgba(18, 19, 16, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(246, 243, 236, 0.15);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.55rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  white-space: nowrap;
+}
+
+.visual-annotation__title {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--color-warm-white);
+  text-transform: uppercase;
+}
+
+.visual-annotation__desc {
+  font-family: var(--font-body);
+  font-size: 0.5625rem;
+  color: var(--color-sand);
+  letter-spacing: 0.02em;
+  opacity: 0.9;
+}
+
+/* Card Footer — Datum Reference */
+.visual-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(246, 243, 236, 0.08);
+  padding-top: 0.5rem;
+  z-index: 10;
+}
+
+.visual-card__status {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.12em;
+  color: var(--color-concrete);
+  text-transform: uppercase;
+}
+
+.visual-card__status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-bronze);
+}
+
+.visual-card__axis {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  color: var(--color-stone);
+  opacity: 0.7;
+}
+
+/* ================================================================
+   RESPONSIVE DESIGN & MOBILE SAFETY
+   ================================================================ */
+
+@media (max-width: 1200px) {
+  .scene-visual-wrapper {
+    max-width: 420px;
+    min-height: 400px;
+  }
+  .scene-visual-card {
+    height: 400px;
+    padding: 1.25rem;
+  }
+  .visual-stage-viewport {
+    height: 260px;
+  }
+  .visual-photorealistic-asset {
+    max-height: 240px;
+  }
+}
+
+@media (max-width: 960px) {
+  .scene-visual-wrapper {
+    max-width: 340px;
+    min-height: 340px;
+    transform: scale(0.9);
+    transform-origin: center right;
+  }
+  .scene-visual-card {
+    height: 340px;
+    padding: 1rem;
+  }
+  .visual-stage-viewport {
+    height: 220px;
+  }
+  .visual-photorealistic-asset {
+    max-height: 200px;
+  }
+  .visual-annotation__content {
+    padding: 0.2rem 0.4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .scene-visual-wrapper {
+    display: none; /* Safely hides on mobile to guarantee zero overlap with editorial text */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-visual-wrapper {
+    transition: none !important;
+    transform: none !important;
+  }
+  .visual-annotation__node::after {
+    animation: none;
+  }
+}

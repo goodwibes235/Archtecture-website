@@ -94,23 +94,36 @@
   z-index: 30;
   pointer-events: auto;
   display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(1.5rem, 3.5vw, 4rem);
   padding-inline: var(--gutter);
-  padding-top: calc(var(--nav-height) + 2rem);
+  padding-top: calc(var(--nav-height) + 1.5rem);
   padding-bottom: clamp(2.5rem, 6vh, 4.5rem);
   will-change: transform, opacity;
 }
 
-.scene-text-layer--hero {
+.scene-text-layer--hero,
+.scene-text-layer--philosophy,
+.scene-text-layer--residence,
+.scene-text-layer--interior,
+.scene-text-layer--closing {
   align-items: flex-end;
   justify-content: space-between;
+}
+
+.scene-text-layer--materials {
+  align-items: center;
+  justify-content: space-between;
+  padding-top: calc(var(--nav-height) + 2rem);
 }
 
 .scroll-cue {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 1rem;
   user-select: none;
 }
 
@@ -146,32 +159,6 @@
   0% { left: -100%; }
   50% { left: 0%; }
   100% { left: 100%; }
-}
-
-.scene-text-layer--philosophy {
-  align-items: flex-end;
-  justify-content: flex-start;
-}
-
-.scene-text-layer--residence {
-  align-items: flex-end;
-  justify-content: flex-start;
-}
-
-.scene-text-layer--interior {
-  align-items: flex-end;
-  justify-content: flex-start;
-}
-
-.scene-text-layer--materials {
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding-top: calc(var(--nav-height) + 3.5rem);
-}
-
-.scene-text-layer--closing {
-  align-items: center;
-  justify-content: center;
 }
 
 /* Editorial Eyebrow & Accents */
@@ -264,7 +251,9 @@
 
 /* Hero Typography */
 .hero-editorial {
-  max-width: 820px;
+  max-width: 620px;
+  width: 54%;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -306,7 +295,9 @@
 
 /* Philosophy Typography */
 .philosophy-editorial {
-  max-width: 820px;
+  max-width: 620px;
+  width: 54%;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -339,7 +330,9 @@
 
 /* Residence Typography */
 .residence-editorial {
-  max-width: 800px;
+  max-width: 620px;
+  width: 54%;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -383,7 +376,9 @@
 
 /* Interior Typography */
 .interior-editorial {
-  max-width: 800px;
+  max-width: 620px;
+  width: 54%;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -430,7 +425,9 @@
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
-  max-width: 780px;
+  max-width: 620px;
+  width: 54%;
+  flex-shrink: 0;
 }
 
 .materials-editorial-header {
@@ -468,12 +465,14 @@
 
 /* Closing Typography */
 .closing-editorial {
-  max-width: 860px;
-  margin-inline: auto;
-  text-align: center;
+  max-width: 620px;
+  width: 54%;
+  flex-shrink: 0;
+  margin-inline: 0;
+  text-align: left;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 1.5rem;
 }
 
@@ -506,7 +505,7 @@
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: wrap;
   margin-top: 0.5rem;
 }
