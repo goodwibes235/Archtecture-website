@@ -1,0 +1,157 @@
+/* ================================================================
+   ATELIER — Studio / Manifesto Styles
+   ================================================================ */
+
+.studio-page {
+  background: var(--color-charcoal);
+  min-height: 100vh;
+  padding-top: var(--nav-height);
+  color: var(--color-ivory);
+}
+
+.studio-hero {
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  border-bottom: var(--border-hairline);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.studio-hero__title {
+  color: var(--color-ivory);
+  max-width: 900px;
+}
+
+.studio-hero__lead {
+  max-width: 620px;
+  color: var(--color-limestone);
+}
+
+.studio-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-2xl);
+}
+
+.studio-philosophy {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: clamp(2rem, 5vw, 6rem);
+  align-items: flex-start;
+  padding-bottom: var(--space-xl);
+  border-bottom: var(--border-hairline);
+}
+
+.studio-philosophy__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 820px;
+}
+
+.studio-philosophy__lead {
+  color: var(--color-ivory);
+  font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+  line-height: 1.6;
+}
+
+.studio-philosophy__text p {
+  color: var(--color-limestone);
+  line-height: 1.75;
+}
+
+.studio-principles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.studio-principles__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.principles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.principle-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line-inverse);
+  padding: clamp(1.75rem, 3vw, 2.5rem);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: all var(--dur-mid) var(--ease-apple);
+}
+
+.principle-card:hover {
+  border-color: rgba(246, 243, 236, 0.35);
+  background: var(--color-surface-elevated);
+  transform: translateY(-4px);
+}
+
+.principle-card__roman {
+  font-size: var(--text-label);
+  color: var(--color-concrete);
+}
+
+.principle-card__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
+  font-weight: 300;
+  color: var(--color-ivory);
+}
+
+.principle-card__desc {
+  font-size: var(--text-small);
+  color: var(--color-limestone);
+  line-height: 1.65;
+}
+
+/* CTA */
+.studio-cta {
+  padding-bottom: var(--space-2xl);
+}
+
+.studio-cta__card {
+  background: var(--color-charcoal-light);
+  border: 1px solid var(--color-line-inverse);
+  padding: clamp(2.5rem, 5vw, 5rem);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  max-width: 960px;
+  margin-inline: auto;
+}
+
+.studio-cta__title {
+  color: var(--color-ivory);
+}
+
+.studio-cta__desc {
+  max-width: 580px;
+  color: var(--color-limestone);
+}
+
+@media (max-width: 840px) {
+  .studio-philosophy {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .principles-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

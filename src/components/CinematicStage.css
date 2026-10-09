@@ -1,0 +1,520 @@
+/* ================================================================
+   ATELIER — Master 3D Cinematic Frame-Sequence & Parallax Styles
+   Persistent 100svh Viewport · Real WebP Sequence Canvas · Typography
+   ================================================================ */
+
+.cinematic-container {
+  position: relative;
+  width: 100%;
+  height: 600vh; /* Master scroll track for 6 continuous chapters */
+  background-color: var(--color-charcoal);
+  contain: paint layout;
+}
+
+/* Persistent Viewport-sized Cinematic Stage */
+.cinematic-stage {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: var(--color-charcoal);
+  user-select: none;
+}
+
+/* Persistent Base Atmosphere — guarantees zero black screens during transitions */
+.stage-base-atmosphere {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 60% 40%,
+    #2a241b 0%,
+    #181612 45%,
+    #0e0f0d 85%
+  );
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ================================================================
+   1. STAGE HUD & TELEMETRY BAR
+   ================================================================ */
+
+.stage-hud {
+  position: absolute;
+  top: calc(var(--nav-height) + 0.75rem);
+  left: var(--gutter);
+  right: var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.stage-hud__left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.hud-label {
+  color: var(--color-limestone);
+  font-size: var(--text-micro);
+  letter-spacing: 0.22em;
+}
+
+.hud-code {
+  color: var(--color-stone);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.stage-hud__center {
+  pointer-events: auto;
+}
+
+.chapter-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(14, 15, 13, 0.75);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-full);
+  padding: 0.25rem 0.5rem;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.chapter-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  background: transparent;
+  border: none;
+  color: var(--color-stone);
+  font-size: var(--text-micro);
+  cursor: pointer;
+  transition: all 0.3s var(--ease-apple);
+}
+
+.chapter-pill__num {
+  font-size: 0.68rem;
+  opacity: 0.7;
+}
+
+.chapter-pill__name {
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.chapter-pill:hover {
+  color: var(--color-sand);
+  background: rgba(246, 243, 236, 0.08);
+}
+
+.chapter-pill--active {
+  background: rgba(200, 169, 110, 0.16);
+  color: var(--color-bronze-glow);
+  border: 1px solid rgba(200, 169, 110, 0.35);
+  box-shadow: 0 0 15px rgba(200, 169, 110, 0.15);
+}
+
+.chapter-pill--active .chapter-pill__num {
+  opacity: 1;
+  color: var(--color-bronze);
+}
+
+.stage-hud__right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hud-progress {
+  color: var(--color-bronze);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+}
+
+/* Corner registration marks (+) */
+.stage-crosshair {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: rgba(246, 243, 236, 0.25);
+  pointer-events: none;
+  z-index: 90;
+  user-select: none;
+  line-height: 1;
+}
+
+.stage-crosshair--tl { top: 1.25rem; left: 1.25rem; }
+.stage-crosshair--tr { top: 1.25rem; right: 1.25rem; }
+.stage-crosshair--bl { bottom: 1.5rem; left: 1.25rem; }
+.stage-crosshair--br { bottom: 1.5rem; right: 1.25rem; }
+
+/* ================================================================
+   2. SCENE STACKS & REAL VIDEO FRAME CANVAS
+   ================================================================ */
+
+.scene-stack {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.layer--canvas-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.canvas-fallback-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 1;
+}
+
+.scene-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 2;
+}
+
+/* Optical Vignette Overlay for Text Legibility */
+.cinematic-vignette-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(14, 15, 13, 0.15) 0%,
+    rgba(14, 15, 13, 0.45) 70%,
+    rgba(14, 15, 13, 0.85) 100%
+  ),
+  linear-gradient(
+    to bottom,
+    rgba(14, 15, 13, 0.7) 0%,
+    rgba(14, 15, 13, 0.1) 25%,
+    rgba(14, 15, 13, 0.2) 65%,
+    rgba(14, 15, 13, 0.82) 100%
+  );
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* ================================================================
+   3. EDITORIAL HTML TYPOGRAPHY LAYERS
+   ================================================================ */
+
+.layer--text {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: auto;
+  display: flex;
+  padding-inline: var(--gutter);
+  padding-top: calc(var(--nav-height) + 2rem);
+  padding-bottom: clamp(2.5rem, 6vh, 4.5rem);
+  will-change: transform, opacity;
+}
+
+.layer--text-hero {
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+.layer--text-philosophy {
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+.layer--text-residence {
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+.layer--text-interior {
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.layer--text-materials {
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding-top: calc(var(--nav-height) + 3.5rem);
+}
+
+.layer--text-closing {
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hero Typography */
+.hero-editorial {
+  max-width: 780px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.hero-editorial__title {
+  margin-top: 0.25rem;
+}
+
+.hero-editorial__sub {
+  max-width: 600px;
+  color: var(--color-sand);
+}
+
+.hero-editorial__ctas {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Philosophy Typography */
+.philosophy-editorial {
+  max-width: 780px;
+}
+
+.philosophy-quote-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.philosophy-title {
+  color: var(--color-warm-white);
+}
+
+.philosophy-sub {
+  color: var(--color-sand);
+  max-width: 620px;
+}
+
+/* Residence Typography */
+.residence-editorial {
+  max-width: 740px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background: rgba(14, 15, 13, 0.65);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.residence-badge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.residence-editorial__desc {
+  color: var(--color-sand);
+}
+
+/* Interior Typography */
+.interior-editorial {
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background: rgba(14, 15, 13, 0.6);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.interior-editorial__lead {
+  color: var(--color-sand);
+}
+
+.interior-tag-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-block: 0.25rem;
+}
+
+/* Material Study Typography & Badges */
+.materials-editorial-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 740px;
+}
+
+.materials-editorial-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: rgba(14, 15, 13, 0.65);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.material-sync-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.mat-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  background: rgba(14, 15, 13, 0.75);
+  border: 1px solid var(--border-hairline);
+  color: var(--color-stone);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  backdrop-filter: blur(12px);
+  transition: all 0.35s var(--ease-apple);
+}
+
+.mat-pill__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-stone);
+  transition: all 0.35s var(--ease-apple);
+}
+
+.mat-pill--active {
+  color: var(--color-bronze-glow);
+  background: rgba(200, 169, 110, 0.18);
+  border-color: rgba(200, 169, 110, 0.5);
+  box-shadow: 0 0 20px rgba(200, 169, 110, 0.2);
+  transform: translateY(-2px);
+}
+
+.mat-pill--active .mat-pill__dot {
+  background: var(--color-bronze-glow);
+  box-shadow: 0 0 8px var(--color-bronze-glow);
+}
+
+/* Closing Typography */
+.closing-editorial {
+  max-width: 820px;
+  margin-inline: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(14, 15, 13, 0.65);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  padding: clamp(2rem, 4vw, 3.5rem);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.closing-editorial__actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+/* ================================================================
+   4. STAGE BOTTOM TRACKER BAR
+   ================================================================ */
+
+.stage-tracker {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: rgba(246, 243, 236, 0.08);
+  z-index: 100;
+}
+
+.stage-tracker__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-bronze) 0%, var(--color-bronze-glow) 100%);
+  box-shadow: 0 0 10px rgba(200, 169, 110, 0.6);
+  transition: width 0.08s linear;
+}
+
+/* ================================================================
+   5. RESPONSIVE ADAPTATIONS
+   ================================================================ */
+
+@media (max-width: 1024px) {
+  .stage-hud__center {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .stage-hud {
+    top: calc(var(--nav-height) + 0.5rem);
+  }
+
+  .layer--text {
+    padding-bottom: 2.5rem;
+  }
+
+  .layer--text-materials {
+    padding-top: calc(var(--nav-height) + 2rem);
+  }
+
+  .hero-editorial__ctas,
+  .closing-editorial__actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-editorial__ctas .btn,
+  .closing-editorial__actions .btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-canvas {
+    display: none;
+  }
+  .canvas-fallback-poster {
+    display: block;
+  }
+}

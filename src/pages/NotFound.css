@@ -1,0 +1,32 @@
+/* 404 Page */
+.notfound {
+  background: var(--color-charcoal);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gutter);
+}
+
+.notfound__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+  max-width: 560px;
+}
+
+.notfound__headline {
+  color: var(--color-ivory);
+}
+
+.notfound__sub {
+  max-width: 400px;
+}
+
+.notfound__ctas {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-top: var(--space-xs);
+}

@@ -1,0 +1,375 @@
+/* ================================================================
+   ATELIER — Global Architectural Design Tokens & System
+   Apple-inspired restraint, architectural editorial polish
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* ── Design Tokens ─────────────────────────────────────────────── */
+:root {
+  /* Colors */
+  --color-charcoal:        #0E0F0D;
+  --color-charcoal-light:  #161713;
+  --color-surface:         #1C1D18;
+  --color-surface-elevated:#24251F;
+  --color-ivory:           #F6F3EC;
+  --color-ivory-dim:       #E5DFC8;
+  --color-warm-white:      #F6F3EC;
+  --color-limestone:       #D4C9B8;
+  --color-sand:            #D8CEBE;
+  --color-concrete:        #8C897E;
+  --color-stone:           #A39C90;
+  --color-olive:           #525345;
+  --color-bronze:          #B89A76;
+  --color-bronze-glow:     #C8A96E;
+  --color-bronze-dark:     #7D6548;
+  --color-white:           #FFFFFF;
+
+  /* Lines & Borders */
+  --color-line:            rgba(14, 15, 13, 0.12);
+  --color-line-inverse:    rgba(246, 243, 236, 0.12);
+  --color-line-subtle:     rgba(246, 243, 236, 0.06);
+  --border-hairline:       1px solid var(--color-line-inverse);
+  --radius-sm:             6px;
+  --radius-md:             12px;
+  --radius-full:           9999px;
+
+  /* Glassmorphism */
+  --glass-bg:              rgba(14, 15, 13, 0.65);
+  --glass-bg-card:         rgba(28, 29, 24, 0.55);
+  --glass-border:          rgba(246, 243, 236, 0.12);
+  --glass-blur:            blur(18px);
+
+  /* Typography */
+  --font-display:          'Cormorant Garamond', 'Georgia', serif;
+  --font-serif:            'Cormorant Garamond', 'Georgia', serif;
+  --font-body:             'Plus Jakarta Sans', 'system-ui', sans-serif;
+  --font-mono:             'Space Mono', 'SF Mono', monospace;
+
+  /* Type Scale — clamp(min, preferred, max) */
+  --text-hero:             clamp(3.75rem, 8.5vw, 8.5rem);
+  --text-display:          clamp(3rem, 6.5vw, 6.5rem);
+  --text-h1:               clamp(2.4rem, 4.5vw, 4.5rem);
+  --text-h2:               clamp(1.8rem, 3.2vw, 3.2rem);
+  --text-h3:               clamp(1.3rem, 2.2vw, 2rem);
+  --text-lead:             clamp(1.05rem, 1.4vw, 1.3rem);
+  --text-body:             1rem;
+  --text-small:            0.875rem;
+  --text-label:            0.7rem;
+  --text-micro:            0.625rem;
+
+  /* Spacing */
+  --space-2xs:             0.25rem;
+  --space-xs:              0.5rem;
+  --space-sm:              1rem;
+  --space-md:              2rem;
+  --space-lg:              3.5rem;
+  --space-xl:              5.5rem;
+  --space-2xl:             9rem;
+
+  /* Page gutter */
+  --gutter:                clamp(1.5rem, 4.5vw, 5.5rem);
+  --gutter-narrow:         clamp(1rem, 3vw, 3rem);
+
+  /* Content widths */
+  --max-content:           1480px;
+  --max-text:              760px;
+  --max-narrow:            560px;
+
+  /* Motion */
+  --ease-out-expo:         cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-expo:      cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-apple:            cubic-bezier(0.25, 1, 0.5, 1);
+  --dur-fast:              0.25s;
+  --dur-mid:               0.5s;
+  --dur-slow:              0.9s;
+
+  /* Nav */
+  --nav-height:            4.75rem;
+}
+
+/* ── Reset ─────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: auto;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+  background-color: var(--color-charcoal);
+}
+
+body {
+  background-color: var(--color-charcoal);
+  color: var(--color-ivory);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.65;
+  font-weight: 400;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+img, video, canvas {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  color: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--color-limestone);
+}
+
+/* ── Typography Utility Classes ────────────────────────────────── */
+.text-display {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: 300;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+}
+
+.text-hero {
+  font-family: var(--font-display);
+  font-size: var(--text-hero);
+  font-weight: 300;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+.text-h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.text-h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+
+.text-h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.text-lead {
+  font-size: var(--text-lead);
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--color-limestone);
+}
+
+.text-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-concrete);
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  letter-spacing: 0.05em;
+}
+
+.text-gold {
+  color: var(--color-bronze-glow);
+}
+
+/* ── Container & Layouts ───────────────────────────────────────── */
+.page-container {
+  max-width: var(--max-content);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.page-container--narrow {
+  max-width: var(--max-text);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ── Architectural HUD & Badges ────────────────────────────────── */
+.hud-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ivory-dim);
+}
+
+.hud-badge__dot {
+  width: 6px;
+  height: 6px;
+  background: var(--color-bronze);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(184, 154, 118, 0.7);
+}
+
+.hud-coordinates {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-concrete);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ── Buttons & CTAs ────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.85rem;
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border-radius: 999px;
+  transition: all var(--dur-mid) var(--ease-apple);
+  position: relative;
+  overflow: hidden;
+  text-transform: none;
+}
+
+.btn--primary {
+  background: var(--color-ivory);
+  color: var(--color-charcoal);
+  border: 1px solid var(--color-ivory);
+}
+
+.btn--primary:hover {
+  background: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+.btn--ghost {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: var(--color-ivory);
+  border: 1px solid var(--glass-border);
+}
+
+.btn--ghost:hover {
+  background: rgba(246, 243, 236, 0.12);
+  border-color: rgba(246, 243, 236, 0.35);
+  transform: translateY(-2px);
+}
+
+.btn--outline {
+  background: transparent;
+  color: var(--color-ivory);
+  border: 1px solid var(--color-line-inverse);
+}
+
+.btn--outline:hover {
+  border-color: var(--color-ivory);
+  background: rgba(246, 243, 236, 0.05);
+}
+
+.btn--large {
+  padding: 1.15rem 2.4rem;
+  font-size: 1rem;
+}
+
+.btn__arrow {
+  transition: transform var(--dur-mid) var(--ease-apple);
+}
+
+.btn:hover .btn__arrow {
+  transform: translateX(4px);
+}
+
+/* ── Decorative & Dividers ─────────────────────────────────────── */
+.divider {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--color-line-inverse);
+}
+
+.divider--light {
+  background: var(--color-line);
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-charcoal);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-elevated);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-concrete);
+}
+
+/* ── Focus Styles ──────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-bronze);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── Reduced Motion ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

@@ -1,0 +1,165 @@
+/* ================================================================
+   CinematicScene — Architectural Layer System
+   ================================================================ */
+
+.cinematic-wrapper {
+  height: var(--scroll-span, 200vh);
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-charcoal);
+}
+
+.cinematic-sticky {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Layer 1: Visual background */
+.cinematic-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.cinematic-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.02);
+  transition: transform 0.8s var(--ease-apple);
+}
+
+/* When canvas is present, poster sits behind it */
+.cinematic-poster--with-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.cinematic-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+}
+
+/* Corner registration marks (+) */
+.cinematic-corner {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: rgba(246, 243, 236, 0.25);
+  pointer-events: none;
+  z-index: 4;
+  user-select: none;
+  line-height: 1;
+}
+
+.cinematic-corner--tl { top: 1.25rem; left: 1.25rem; }
+.cinematic-corner--tr { top: 1.25rem; right: 1.25rem; }
+.cinematic-corner--bl { bottom: 1.25rem; left: 1.25rem; }
+.cinematic-corner--br { bottom: 1.25rem; right: 1.25rem; }
+
+/* Top HUD Bar */
+.cinematic-hud {
+  position: absolute;
+  top: calc(var(--nav-height) + 1.25rem);
+  left: var(--gutter);
+  right: var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.hud-chapter {
+  color: var(--color-limestone);
+  font-size: var(--text-micro);
+  letter-spacing: 0.2em;
+}
+
+/* Layer 3: Multi-stop Cinematic Overlay */
+.cinematic-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(14, 15, 13, 0.2) 0%,
+    rgba(14, 15, 13, 0.6) 75%,
+    rgba(14, 15, 13, 0.88) 100%
+  ),
+  linear-gradient(
+    to bottom,
+    rgba(14, 15, 13, 0.75) 0%,
+    rgba(14, 15, 13, 0.15) 30%,
+    rgba(14, 15, 13, 0.2) 65%,
+    rgba(14, 15, 13, 0.85) 100%
+  );
+  pointer-events: none;
+  will-change: opacity;
+  z-index: 2;
+}
+
+/* Layer 4: HTML content */
+.cinematic-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding-inline: var(--gutter);
+  padding-top: calc(var(--nav-height) + 2rem);
+  padding-bottom: clamp(2rem, 5vh, 4.5rem);
+  will-change: transform;
+  z-index: 3;
+  pointer-events: auto;
+}
+
+.cinematic-content--bottom-left {
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.cinematic-content--center {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.cinematic-content--split {
+  justify-content: space-between;
+}
+
+.cinematic-content--fullscreen {
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .cinematic-content {
+    padding-inline: var(--gutter-narrow);
+    padding-bottom: 2rem;
+  }
+
+  .cinematic-hud {
+    top: calc(var(--nav-height) + 0.5rem);
+    left: var(--gutter-narrow);
+    right: var(--gutter-narrow);
+  }
+
+  .cinematic-corner {
+    display: none;
+  }
+}
+
